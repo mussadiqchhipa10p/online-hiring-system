@@ -1,0 +1,94 @@
+---
+alwaysApply: true
+---
+
+# Cursor AI Prompt — Implementation Workflow
+## Instructions to the Agent
+Act as a senior tech lead. Apply incremental commits. At each step, run/type-check/test. Keep diffs minimal and documented in commit messages.
+
+### Phase 1 — Foundations
+1. Configure root: pnpm workspaces, turbo, eslint/prettier, tsconfig base.
+2. Set up Docker Compose for Postgres (14+) and Redis. Create `.env.example` files.
+3. Initialize Prisma in `apps/api`; add initial schema (Users, Employers, Candidates, Jobs, Applications, Ratings, Resumes). Create seed script.
+4. Bootstrap `apps/web` with Vite + React + TS; add Router, Redux Toolkit, React Query (optional), and API client.
+5. Bootstrap `apps/admin` with React Admin; connect to API data provider and auth provider.
+
+### Phase 2 — Auth
+6. Implement JWT auth (access/refresh) with httpOnly cookies. Password hashing (bcrypt). Zod validation.
+7. Add OAuth (Google, LinkedIn) via Passport. Map providers to User records.
+8. Frontends: login/signup forms, protected routes, role-based guards (ADMIN/EMPLOYER/CANDIDATE).
+
+### Phase 3 — Core Domain
+9. Jobs CRUD (Employer): create, update, publish/close, delete. Search & filter by skills/location/status.
+10. Applications: Candidate apply (upload resume URL), Employer view/filter, status transitions (PENDING→REVIEW→INTERVIEW→HIRED/REJECTED).
+11. Ratings: Employer records score (1–5) and feedback after interview; Candidate can view.
+
+### Phase 4 — Real-time & Analytics
+12. Socket.IO events for application status/rating updates; in-app toasts/notifications.
+13. Analytics endpoints + queries: applications per job, avg rating per employer, hires trends. Cache with Redis (TTL) and invalidate on writes.
+14. Charts in web/admin using Chart.js. Add date range filters.
+
+### Phase 5 — Quality
+15. Unit tests: Jest/Supertest (API), Vitest/RTL (web/admin). Sample Cypress E2E for apply flow.
+16. Security hardening: rate limiting, CORS, helmet, CSRF on non-API pages, input validation, RBAC middleware.
+17. Observability: pino logger, request IDs, error boundaries, basic metrics (Prometheus-ready).
+
+### Phase 6 — Delivery
+18. CI/CD with GitHub Actions: lint/test/build on PR. On main: build Docker images for `api`, deploy to AWS (ECS or EC2). Frontend to Vercel/Netlify.
+19. Database: managed **Postgres** (e.g., RDS/Neon/Supabase). Run Prisma migrations in the pipeline.
+20. Release notes automation from merged PR titles + changelog.
+
+### Definition of Done Checklist
+- [ ] Role-based auth working across apps.
+- [ ] Employers CRUD jobs; Candidates apply; Employers rate.
+- [ ] Real-time notifications for status/rating updates.
+- [ ] Analytics dashboards showing apps/job, avg ratings, and hires.
+- [ ] Admin can CRUD employer accounts and view platform metrics.
+- [ ] Tests passing in CI; basic E2E green.
+- [ ] Secure defaults (helmet, rate limit, strong JWT, validated inputs).
+- [ ] One-click local start via `pnpm dev` and Docker Compose.
+# Cursor AI Prompt — Implementation Workflow
+## Instructions to the Agent
+Act as a senior tech lead. Apply incremental commits. At each step, run/type-check/test. Keep diffs minimal and documented in commit messages.
+
+### Phase 1 — Foundations
+1. Configure root: pnpm workspaces, turbo, eslint/prettier, tsconfig base.
+2. Set up Docker Compose for Postgres (14+) and Redis. Create `.env.example` files.
+3. Initialize Prisma in `apps/api`; add initial schema (Users, Employers, Candidates, Jobs, Applications, Ratings, Resumes). Create seed script.
+4. Bootstrap `apps/web` with Vite + React + TS; add Router, Redux Toolkit, React Query (optional), and API client.
+5. Bootstrap `apps/admin` with React Admin; connect to API data provider and auth provider.
+
+### Phase 2 — Auth
+6. Implement JWT auth (access/refresh) with httpOnly cookies. Password hashing (bcrypt). Zod validation.
+7. Add OAuth (Google, LinkedIn) via Passport. Map providers to User records.
+8. Frontends: login/signup forms, protected routes, role-based guards (ADMIN/EMPLOYER/CANDIDATE).
+
+### Phase 3 — Core Domain
+9. Jobs CRUD (Employer): create, update, publish/close, delete. Search & filter by skills/location/status.
+10. Applications: Candidate apply (upload resume URL), Employer view/filter, status transitions (PENDING→REVIEW→INTERVIEW→HIRED/REJECTED).
+11. Ratings: Employer records score (1–5) and feedback after interview; Candidate can view.
+
+### Phase 4 — Real-time & Analytics
+12. Socket.IO events for application status/rating updates; in-app toasts/notifications.
+13. Analytics endpoints + queries: applications per job, avg rating per employer, hires trends. Cache with Redis (TTL) and invalidate on writes.
+14. Charts in web/admin using Chart.js. Add date range filters.
+
+### Phase 5 — Quality
+15. Unit tests: Jest/Supertest (API), Vitest/RTL (web/admin). Sample Cypress E2E for apply flow.
+16. Security hardening: rate limiting, CORS, helmet, CSRF on non-API pages, input validation, RBAC middleware.
+17. Observability: pino logger, request IDs, error boundaries, basic metrics (Prometheus-ready).
+
+### Phase 6 — Delivery
+18. CI/CD with GitHub Actions: lint/test/build on PR. On main: build Docker images for `api`, deploy to AWS (ECS or EC2). Frontend to Vercel/Netlify.
+19. Database: managed **Postgres** (e.g., RDS/Neon/Supabase). Run Prisma migrations in the pipeline.
+20. Release notes automation from merged PR titles + changelog.
+
+### Definition of Done Checklist
+- [ ] Role-based auth working across apps.
+- [ ] Employers CRUD jobs; Candidates apply; Employers rate.
+- [ ] Real-time notifications for status/rating updates.
+- [ ] Analytics dashboards showing apps/job, avg ratings, and hires.
+- [ ] Admin can CRUD employer accounts and view platform metrics.
+- [ ] Tests passing in CI; basic E2E green.
+- [ ] Secure defaults (helmet, rate limit, strong JWT, validated inputs).
+- [ ] One-click local start via `pnpm dev` and Docker Compose.

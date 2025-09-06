@@ -1,0 +1,176 @@
+---
+alwaysApply: true
+---
+
+# PRD implementation plan Generator - Cursor Rules
+## Title: Online Hiring System
+Role: You are a principal software architect. Generate a production-ready monorepo with TypeScript across frontend, admin panel, and backend. Follow best practices, include tests, and set up CI/CD.
+
+### High-Level Goals
+- Build an online hiring platform where employers post jobs, manage applications, rate candidates after interviews, and view analytics.
+- Candidates can browse/apply and see feedback.
+- Admins can create/manage employer accounts and monitor metrics.
+- Real-time notifications (Socket.IO), JWT auth + OAuth (Google, LinkedIn), Postgres DB, Redis cache.
+
+### Architecture
+- Monorepo using `pnpm` workspaces.
+- Packages:
+  - `apps/web` — React (Vite), React Router, Redux Toolkit (or Context), Socket.IO client, Chart.js/D3, OAuth.
+  - `apps/admin` — React Admin (Material UI), Chart.js, Socket.IO client.
+  - `apps/api` — Node.js (Express + TypeScript), Socket.IO server, Postgres via Prisma, Redis for caching/queues, JWT auth + Passport for OAuth.
+  - `packages/ui` — shared React UI components (button, table, cards, charts wrappers).
+  - `packages/types` — shared TypeScript types (DTOs, API schemas).
+  - `packages/config` — ESLint, Prettier, tsconfig base.
+- Infra: Docker Compose for local dev (Postgres, Redis), `.env` templating, GitHub Actions for CI/CD.
+
+### Tech Choices
+- Frontend: React 18 + Vite, React Router v6, Redux Toolkit, React Query (optional), Chart.js.
+- Admin: React Admin + MUI.
+- Backend: Express, Prisma (Postgres), Zod for validation, Passport (Google, LinkedIn), Socket.IO.
+- Auth: JWT (access/refresh), OAuth2 (Google, LinkedIn).
+- DB: **Postgres** (primary). Use Prisma migrations. Redis for caching/sessions/rate limiting.
+- Testing: Vitest/RTL (frontend), Jest/Supertest (backend), Cypress for E2E.
+- Lint/Format: ESLint + Prettier.
+
+### Generate: File/Folder Scaffold
+1) Initialize monorepo
+```bash
+pnpm init -y
+pnpm dlx turbo@latest init
+```
+2) Add workspaces in root `package.json`
+```json
+{ "name": "online-hiring-system", "private": true, "packageManager": "pnpm@9", "workspaces": ["apps/*", "packages/*"] }
+```
+3) Create apps and packages folders; add baseline README and licenses.
+4) apps/web (React + Vite + TS): auth pages (login/signup), dashboards (candidate, employer), routing, state slices, API client, sockets, charts.
+5) apps/admin (React Admin): resources for Employers, Jobs, Applications, Analytics.
+6) apps/api (Express + TS): REST endpoints, Socket.IO, Prisma, Passport OAuth, JWT, Redis.
+7) packages/ui (shadcn or MUI wrappers), packages/types (shared DTO), packages/config (eslint/tsconfig).
+8) Docker Compose for Postgres + Redis. Prisma schema + seeds.
+9) GitHub Actions workflows: lint, test, build, deploy (placeholders).
+
+### Environment
+- `.env.example` at repo root and per app (web/admin/api).
+- Important keys: DATABASE_URL (Postgres), REDIS_URL, JWT_SECRET, GOOGLE_OAUTH, LINKEDIN_OAUTH.
+
+### Data Model (Prisma sketch)
+```prisma
+model User { id String @id @default(cuid()) email String @unique role Role name String? createdAt DateTime @default(now()) updatedAt DateTime @updatedAt Employer Employer? Candidate Candidate? }
+enum Role { ADMIN EMPLOYER CANDIDATE }
+model Employer { id String @id @default(cuid()) userId String @unique user User @relation(fields: [userId], references: [id]) companyName String jobs Job[] }
+model Candidate { id String @id @default(cuid()) userId String @unique user User @relation(fields: [userId], references: [id]) resumes Resume[] applications Application[] ratings Rating[] }
+model Job { id String @id @default(cuid()) employerId String employer Employer @relation(fields: [employerId], references: [id]) title String description String location String skills String[] status JobStatus @default(DRAFT) views Int @default(0) applications Application[] createdAt DateTime @default(now()) }
+enum JobStatus { DRAFT PUBLISHED CLOSED }
+model Application { id String @id @default(cuid()) jobId String job Job @relation(fields: [jobId], references: [id]) candidateId String candidate Candidate @relation(fields: [candidateId], references: [id]) status AppStatus @default(PENDING) notes String? rating Rating? createdAt DateTime @default(now()) }
+enum AppStatus { PENDING REVIEW INTERVIEW SCHEDULED REJECTED HIRED }
+model Rating { id String @id @default(cuid()) applicationId String @unique application Application @relation(fields:[applicationId], references:[id]) score Int @default(0) feedback String? interviewer String? createdAt DateTime @default(now()) }
+model Resume { id String @id @default(cuid()) candidateId String candidate Candidate @relation(fields:[candidateId], references:[id]) url String parsedJson Json? }
+```
+
+### API Outline
+- Auth: `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/google`, `/auth/linkedin`
+- Jobs: `/jobs` (CRUD, search/filter params)
+- Applications: `/applications` (create, list by job/candidate, update status, schedule interview)
+- Ratings: `/ratings` (create/update), `/candidates/:id/ratings`
+- Employers (Admin): `/admin/employers` (CRUD)
+- Analytics: `/analytics` (job views, applications per job, avg rating, hires)
+
+### Real-time Events (Socket.IO)
+- `application:created`, `application:statusChanged`, `rating:created`, `job:published`
+
+### Acceptance
+- Reproducible local dev via `pnpm i && pnpm dev` with Postgres+Redis from Docker Compose.
+- All apps build on CI. Unit tests passing. Basic E2E covers auth + job apply flow.
+- Admin can CRUD employers. Employers CRUD jobs. Candidates apply. Employers rate.
+- Charts render analytics from `/analytics` endpoints.
+
+### Deliverables
+- Monorepo with working scaffolds, placeholder pages/components, API routes, schemas, and tests.
+- README with setup steps. `.env.example` files and Prisma migrations.
+# Cursor AI Prompt — Project Generator
+## Title: Online Hiring System (Employers + Candidates + Admin)
+Role: You are a principal software architect. Generate a production-ready monorepo with TypeScript across frontend, admin panel, and backend. Follow best practices, include tests, and set up CI/CD.
+
+### High-Level Goals
+- Build an online hiring platform where employers post jobs, manage applications, rate candidates after interviews, and view analytics.
+- Candidates can browse/apply and see feedback.
+- Admins can create/manage employer accounts and monitor metrics.
+- Real-time notifications (Socket.IO), JWT auth + OAuth (Google, LinkedIn), Postgres DB, Redis cache.
+
+### Architecture
+- Monorepo using `pnpm` workspaces.
+- Packages:
+  - `apps/web` — React (Vite), React Router, Redux Toolkit (or Context), Socket.IO client, Chart.js/D3, OAuth.
+  - `apps/admin` — React Admin (Material UI), Chart.js, Socket.IO client.
+  - `apps/api` — Node.js (Express + TypeScript), Socket.IO server, Postgres via Prisma, Redis for caching/queues, JWT auth + Passport for OAuth.
+  - `packages/ui` — shared React UI components (button, table, cards, charts wrappers).
+  - `packages/types` — shared TypeScript types (DTOs, API schemas).
+  - `packages/config` — ESLint, Prettier, tsconfig base.
+- Infra: Docker Compose for local dev (Postgres, Redis), `.env` templating, GitHub Actions for CI/CD.
+
+### Tech Choices
+- Frontend: React 18 + Vite, React Router v6, Redux Toolkit, React Query (optional), Chart.js.
+- Admin: React Admin + MUI.
+- Backend: Express, Prisma (Postgres), Zod for validation, Passport (Google, LinkedIn), Socket.IO.
+- Auth: JWT (access/refresh), OAuth2 (Google, LinkedIn).
+- DB: **Postgres** (primary). Use Prisma migrations. Redis for caching/sessions/rate limiting.
+- Testing: Vitest/RTL (frontend), Jest/Supertest (backend), Cypress for E2E.
+- Lint/Format: ESLint + Prettier.
+
+### Generate: File/Folder Scaffold
+1) Initialize monorepo
+```bash
+pnpm init -y
+pnpm dlx turbo@latest init
+```
+2) Add workspaces in root `package.json`
+```json
+{ "name": "online-hiring-system", "private": true, "packageManager": "pnpm@9", "workspaces": ["apps/*", "packages/*"] }
+```
+3) Create apps and packages folders; add baseline README and licenses.
+4) apps/web (React + Vite + TS): auth pages (login/signup), dashboards (candidate, employer), routing, state slices, API client, sockets, charts.
+5) apps/admin (React Admin): resources for Employers, Jobs, Applications, Analytics.
+6) apps/api (Express + TS): REST endpoints, Socket.IO, Prisma, Passport OAuth, JWT, Redis.
+7) packages/ui (shadcn or MUI wrappers), packages/types (shared DTO), packages/config (eslint/tsconfig).
+8) Docker Compose for Postgres + Redis. Prisma schema + seeds.
+9) GitHub Actions workflows: lint, test, build, deploy (placeholders).
+
+### Environment
+- `.env.example` at repo root and per app (web/admin/api).
+- Important keys: DATABASE_URL (Postgres), REDIS_URL, JWT_SECRET, GOOGLE_OAUTH, LINKEDIN_OAUTH.
+
+### Data Model (Prisma sketch)
+```prisma
+model User { id String @id @default(cuid()) email String @unique role Role name String? createdAt DateTime @default(now()) updatedAt DateTime @updatedAt Employer Employer? Candidate Candidate? }
+enum Role { ADMIN EMPLOYER CANDIDATE }
+model Employer { id String @id @default(cuid()) userId String @unique user User @relation(fields: [userId], references: [id]) companyName String jobs Job[] }
+model Candidate { id String @id @default(cuid()) userId String @unique user User @relation(fields: [userId], references: [id]) resumes Resume[] applications Application[] ratings Rating[] }
+model Job { id String @id @default(cuid()) employerId String employer Employer @relation(fields: [employerId], references: [id]) title String description String location String skills String[] status JobStatus @default(DRAFT) views Int @default(0) applications Application[] createdAt DateTime @default(now()) }
+enum JobStatus { DRAFT PUBLISHED CLOSED }
+model Application { id String @id @default(cuid()) jobId String job Job @relation(fields: [jobId], references: [id]) candidateId String candidate Candidate @relation(fields: [candidateId], references: [id]) status AppStatus @default(PENDING) notes String? rating Rating? createdAt DateTime @default(now()) }
+enum AppStatus { PENDING REVIEW INTERVIEW SCHEDULED REJECTED HIRED }
+model Rating { id String @id @default(cuid()) applicationId String @unique application Application @relation(fields:[applicationId], references:[id]) score Int @default(0) feedback String? interviewer String? createdAt DateTime @default(now()) }
+model Resume { id String @id @default(cuid()) candidateId String candidate Candidate @relation(fields:[candidateId], references:[id]) url String parsedJson Json? }
+```
+
+### API Outline
+- Auth: `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/google`, `/auth/linkedin`
+- Jobs: `/jobs` (CRUD, search/filter params)
+- Applications: `/applications` (create, list by job/candidate, update status, schedule interview)
+- Ratings: `/ratings` (create/update), `/candidates/:id/ratings`
+- Employers (Admin): `/admin/employers` (CRUD)
+- Analytics: `/analytics` (job views, applications per job, avg rating, hires)
+
+### Real-time Events (Socket.IO)
+- `application:created`, `application:statusChanged`, `rating:created`, `job:published`
+
+### Acceptance
+- Reproducible local dev via `pnpm i && pnpm dev` with Postgres+Redis from Docker Compose.
+- All apps build on CI. Unit tests passing. Basic E2E covers auth + job apply flow.
+- Admin can CRUD employers. Employers CRUD jobs. Candidates apply. Employers rate.
+- Charts render analytics from `/analytics` endpoints.
+
+### Deliverables
+- Monorepo with working scaffolds, placeholder pages/components, API routes, schemas, and tests.
+- README with setup steps. `.env.example` files and Prisma migrations.
