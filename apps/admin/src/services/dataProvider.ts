@@ -21,13 +21,13 @@ export const dataProvider: DataProvider = {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const query = {
-      sort: JSON.queryString.stringify([field, order]),
-      range: JSON.queryString.stringify([(page - 1) * perPage, page * perPage - 1]),
-      filter: JSON.queryString.stringify(params.filter),
+      sort: queryString.stringify([field, order]),
+      range: queryString.stringify([(page - 1) * perPage, page * perPage - 1]),
+      filter: queryString.stringify(params.filter),
     };
     const url = `${API_URL}/api/${resource}?${queryString.stringify(query)}`;
     
-    return httpClient(url).then(({ headers, json }) => ({
+    return httpClient(url).then(({ json }) => ({
       data: json.data,
       total: json.pagination?.total || json.data.length,
     }));
@@ -40,7 +40,7 @@ export const dataProvider: DataProvider = {
 
   getMany: (resource, params) => {
     const query = {
-      filter: JSON.queryString.stringify({ id: params.ids }),
+      filter: queryString.stringify({ id: params.ids }),
     };
     const url = `${API_URL}/api/${resource}?${queryString.stringify(query)}`;
     return httpClient(url).then(({ json }) => ({ data: json.data }));
@@ -50,16 +50,16 @@ export const dataProvider: DataProvider = {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const query = {
-      sort: JSON.queryString.stringify([field, order]),
-      range: JSON.queryString.stringify([(page - 1) * perPage, page * perPage - 1]),
-      filter: JSON.queryString.stringify({
+      sort: queryString.stringify([field, order]),
+      range: queryString.stringify([(page - 1) * perPage, page * perPage - 1]),
+      filter: queryString.stringify({
         ...params.filter,
         [params.target]: params.id,
       }),
     };
     const url = `${API_URL}/api/${resource}?${queryString.stringify(query)}`;
     
-    return httpClient(url).then(({ headers, json }) => ({
+    return httpClient(url).then(({ json }) => ({
       data: json.data,
       total: json.pagination?.total || json.data.length,
     }));
@@ -68,26 +68,26 @@ export const dataProvider: DataProvider = {
   update: (resource, params) =>
     httpClient(`${API_URL}/api/${resource}/${params.id}`, {
       method: 'PUT',
-      body: JSON.queryString.stringify(params.data),
+      body: queryString.stringify(params.data),
     }).then(({ json }) => ({ data: json.data })),
 
   updateMany: (resource, params) => {
     const query = {
-      filter: JSON.queryString.stringify({ id: params.ids }),
+      filter: queryString.stringify({ id: params.ids }),
     };
     return httpClient(`${API_URL}/api/${resource}?${queryString.stringify(query)}`, {
       method: 'PUT',
-      body: JSON.queryString.stringify(params.data),
+      body: queryString.stringify(params.data),
     }).then(({ json }) => ({ data: json.data }));
   },
 
   create: (resource, params) =>
     httpClient(`${API_URL}/api/${resource}`, {
       method: 'POST',
-      body: JSON.queryString.stringify(params.data),
+      body: queryString.stringify(params.data),
     }).then(({ json }) => ({
       data: { ...params.data, id: json.data.id },
-    })),
+    })) as any,
 
   delete: (resource, params) =>
     httpClient(`${API_URL}/api/${resource}/${params.id}`, {
@@ -96,7 +96,7 @@ export const dataProvider: DataProvider = {
 
   deleteMany: (resource, params) => {
     const query = {
-      filter: JSON.queryString.stringify({ id: params.ids }),
+      filter: queryString.stringify({ id: params.ids }),
     };
     return httpClient(`${API_URL}/api/${resource}?${queryString.stringify(query)}`, {
       method: 'DELETE',

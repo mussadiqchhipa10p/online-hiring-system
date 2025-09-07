@@ -1,7 +1,7 @@
 module.exports = {
   extends: [
     "eslint:recommended",
-    "@typescript-eslint/recommended",
+    // "@typescript-eslint/recommended",
     "prettier"
   ],
   parser: "@typescript-eslint/parser",
@@ -24,10 +24,10 @@ module.exports = {
           "index"
         ],
         "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
+        // "alphabetize": {
+        //   "order": "asc",
+        //   "caseInsensitive": true
+        // }
       }
     ]
   },
