@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/authService';
 import { loginSchema, registerSchema, refreshTokenSchema } from '../utils/validation';
-import { AuthRequest } from '../middleware/auth';
 
 export class AuthController {
   async register(req: Request, res: Response) {
@@ -58,7 +57,7 @@ export class AuthController {
     }
   }
 
-  async getCurrentUser(req: AuthRequest, res: Response) {
+  async getCurrentUser(req: Request, res: Response) {
     try {
       if (!req.user) {
         return res.status(401).json({
@@ -81,7 +80,7 @@ export class AuthController {
     }
   }
 
-  async logout(req: AuthRequest, res: Response) {
+  async logout(req: Request, res: Response) {
     try {
       if (!req.user) {
         return res.status(401).json({

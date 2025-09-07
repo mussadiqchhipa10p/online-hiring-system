@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authController } from '../controllers/authController';
 import { authenticate } from '../middleware/auth';
 
-const router = Router();
+const router: Router = Router();
 
 // Public routes
 router.post('/register', authController.register.bind(authController));

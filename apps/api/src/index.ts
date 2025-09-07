@@ -1,3 +1,4 @@
+import './types/express';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -8,6 +9,7 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import oauthRoutes from './routes/oauth';
+import jobsRoutes from './routes/jobs';
 import passport from './config/passport';
 
 // Load environment variables
@@ -53,10 +55,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', oauthRoutes);
-
-app.use('/api/jobs', (req, res) => {
-  res.json({ message: 'Jobs routes - Coming soon' });
-});
+app.use('/api/jobs', jobsRoutes);
 
 app.use('/api/applications', (req, res) => {
   res.json({ message: 'Applications routes - Coming soon' });

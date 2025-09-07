@@ -58,7 +58,7 @@ passport.use(
         const email = emails?.[0]?.value;
 
         if (!email) {
-          return done(new Error('No email found in Google profile'), null);
+          return done(new Error('No email found in Google profile'), false);
         }
 
         // Check if user already exists
@@ -76,7 +76,7 @@ passport.use(
             email,
             name: name?.givenName && name?.familyName 
               ? `${name.givenName} ${name.familyName}` 
-              : name?.displayName || 'Google User',
+              : (name as any)?.displayName || 'Google User',
             role: Role.CANDIDATE, // Default role for OAuth users
             password: null, // OAuth users don't have passwords
           },
@@ -91,7 +91,7 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        return done(error, null);
+        return done(error, false);
       }
     }
   )
@@ -130,7 +130,7 @@ passport.use(
             email,
             name: name?.givenName && name?.familyName 
               ? `${name.givenName} ${name.familyName}` 
-              : name?.displayName || 'LinkedIn User',
+              : (name as any)?.displayName || 'LinkedIn User',
             role: Role.CANDIDATE, // Default role for OAuth users
             password: null, // OAuth users don't have passwords
           },
@@ -145,7 +145,7 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        return done(error, null);
+        return done(error, false);
       }
     }
   )

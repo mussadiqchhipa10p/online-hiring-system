@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from '../config/passport';
 import { generateTokens } from '../utils/jwt';
 
-const router = Router();
+const router: Router = Router();
 
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

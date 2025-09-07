@@ -22,7 +22,7 @@ export const generateTokens = (user: User) => {
       type: 'access',
     } as JWTPayload,
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions
   );
 
   const refreshToken = jwt.sign(
@@ -33,7 +33,7 @@ export const generateTokens = (user: User) => {
       type: 'refresh',
     } as JWTPayload,
     JWT_REFRESH_SECRET,
-    { expiresIn: JWT_REFRESH_EXPIRES_IN }
+    { expiresIn: JWT_REFRESH_EXPIRES_IN } as jwt.SignOptions
   );
 
   return { accessToken, refreshToken };
@@ -56,6 +56,6 @@ export const generateAccessToken = (user: User) => {
       type: 'access',
     } as JWTPayload,
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions
   );
 };

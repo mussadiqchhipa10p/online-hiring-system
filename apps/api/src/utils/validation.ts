@@ -58,6 +58,18 @@ export const paginationSchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(10),
 });
 
+export const jobFiltersSchema = z.object({
+  q: z.string().optional(),
+  skills: z.string().transform((val) => val ? val.split(',').map(s => s.trim()) : undefined).optional(),
+  location: z.string().optional(),
+  status: z.enum(['DRAFT', 'PUBLISHED', 'CLOSED']).optional(),
+  employerId: z.string().optional(),
+  sort: z.enum(['createdAt', 'title', 'views']).default('createdAt'),
+  order: z.enum(['asc', 'desc']).default('desc'),
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(100).default(10),
+});
+
 export const jobSearchSchema = z.object({
   query: z.string().optional(),
   location: z.string().optional(),
@@ -82,5 +94,6 @@ export type UpdateJobInput = z.infer<typeof updateJobSchema>;
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
 export type CreateRatingInput = z.infer<typeof createRatingSchema>;
+export type JobFilters = z.infer<typeof jobFiltersSchema>;
 export type JobSearchInput = z.infer<typeof jobSearchSchema>;
 export type ApplicationFilterInput = z.infer<typeof applicationFilterSchema>;
