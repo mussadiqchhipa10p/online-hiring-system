@@ -1,5 +1,6 @@
 import { PrismaClient, Rating, Prisma } from '@prisma/client';
 import { CreateRatingInput, UpdateRatingInput } from '../utils/validation';
+import { analyticsService } from './analyticsService';
 
 const prisma = new PrismaClient();
 
@@ -79,6 +80,9 @@ export class RatingsService {
       },
     });
 
+    // Invalidate analytics cache
+    await analyticsService.invalidateAllAnalytics();
+
     // Emit Socket.IO event for new rating
     // Note: Socket events will be emitted from controllers to avoid circular imports
 
@@ -139,6 +143,9 @@ export class RatingsService {
         },
       },
     });
+
+    // Invalidate analytics cache
+    await analyticsService.invalidateAllAnalytics();
 
     // Emit Socket.IO event for rating update
     // Note: Socket events will be emitted from controllers to avoid circular imports

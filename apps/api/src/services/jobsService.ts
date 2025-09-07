@@ -1,5 +1,6 @@
 import { PrismaClient, Job, JobStatus, Prisma } from '@prisma/client';
 import { CreateJobInput, UpdateJobInput, JobFilters } from '../utils/validation';
+import { analyticsService } from './analyticsService';
 
 const prisma = new PrismaClient();
 
@@ -31,6 +32,10 @@ export class JobsService {
         },
       },
     });
+
+    // Invalidate analytics cache
+    await analyticsService.invalidateEmployerAnalytics(employerId);
+    await analyticsService.invalidateAllAnalytics();
 
     return job;
   }
@@ -261,6 +266,11 @@ export class JobsService {
         },
       },
     });
+
+    // Invalidate analytics cache
+    await analyticsService.invalidateJobAnalytics(id);
+    await analyticsService.invalidateEmployerAnalytics(employerId);
+    await analyticsService.invalidateAllAnalytics();
 
     // Return both updated job and old status for Socket.IO events
     return { job, oldStatus };

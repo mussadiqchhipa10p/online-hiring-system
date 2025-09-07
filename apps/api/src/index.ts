@@ -12,7 +12,9 @@ import oauthRoutes from './routes/oauth';
 import jobsRoutes from './routes/jobs';
 import applicationsRoutes from './routes/applications';
 import ratingsRoutes from './routes/ratings';
+import analyticsRoutes from './routes/analytics';
 import passport from './config/passport';
+import { redisService } from './services/redisService';
 
 // Load environment variables
 dotenv.config();
@@ -64,10 +66,7 @@ app.use('/api/auth', oauthRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/applications', applicationsRoutes);
 app.use('/api/ratings', ratingsRoutes);
-
-app.use('/api/analytics', (req, res) => {
-  res.json({ message: 'Analytics routes - Coming soon' });
-});
+app.use('/api/analytics', analyticsRoutes);
 
 // Socket.IO connection handling is now managed by SocketService
 
@@ -82,9 +81,17 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  
+  // Test Redis connection
+  const redisConnected = await redisService.ping();
+  if (redisConnected) {
+    console.log('✅ Redis connected successfully');
+  } else {
+    console.log('⚠️  Redis connection failed - caching disabled');
+  }
 });
 
 export { io, socketService };

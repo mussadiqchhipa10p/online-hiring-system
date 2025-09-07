@@ -1,5 +1,6 @@
 import { PrismaClient, Application, AppStatus, Prisma } from '@prisma/client';
 import { CreateApplicationInput, UpdateApplicationInput, ApplicationFilters } from '../utils/validation';
+import { analyticsService } from './analyticsService';
 
 const prisma = new PrismaClient();
 
@@ -65,6 +66,10 @@ export class ApplicationsService {
         rating: true,
       },
     });
+
+    // Invalidate analytics cache
+    await analyticsService.invalidateJobAnalytics(data.jobId);
+    await analyticsService.invalidateAllAnalytics();
 
     // Emit Socket.IO event for new application
     // Note: Socket events will be emitted from controllers to avoid circular imports
@@ -253,6 +258,10 @@ export class ApplicationsService {
         rating: true,
       },
     });
+
+    // Invalidate analytics cache
+    await analyticsService.invalidateJobAnalytics(updatedApplication.jobId);
+    await analyticsService.invalidateAllAnalytics();
 
     // Return both updated application and old status for Socket.IO events
     return { application: updatedApplication, oldStatus };
