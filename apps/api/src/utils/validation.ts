@@ -52,6 +52,12 @@ export const createRatingSchema = z.object({
   interviewer: z.string().optional(),
 });
 
+export const updateRatingSchema = z.object({
+  score: z.number().min(1).max(5, 'Score must be between 1 and 5').optional(),
+  feedback: z.string().optional(),
+  interviewer: z.string().optional(),
+});
+
 // Query validation schemas
 export const paginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -82,7 +88,8 @@ export const applicationFilterSchema = z.object({
   jobId: z.string().optional(),
   candidateId: z.string().optional(),
   status: z.enum(['PENDING', 'REVIEW', 'INTERVIEW_SCHEDULED', 'REJECTED', 'HIRED']).optional(),
-  ...paginationSchema.shape,
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(100).default(10),
 });
 
 // Type exports
@@ -94,6 +101,8 @@ export type UpdateJobInput = z.infer<typeof updateJobSchema>;
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
 export type CreateRatingInput = z.infer<typeof createRatingSchema>;
+export type UpdateRatingInput = z.infer<typeof updateRatingSchema>;
 export type JobFilters = z.infer<typeof jobFiltersSchema>;
 export type JobSearchInput = z.infer<typeof jobSearchSchema>;
+export type ApplicationFilters = z.infer<typeof applicationFilterSchema>;
 export type ApplicationFilterInput = z.infer<typeof applicationFilterSchema>;
