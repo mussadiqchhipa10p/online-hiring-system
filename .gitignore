@@ -25,3 +25,4 @@
 /apps/**/.env.test
 /apps/**/.env.production
 .DS_Store
+/apps/**/build/**

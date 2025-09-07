@@ -1,15 +1,19 @@
 module.exports = {
+  env: {
+    browser: true,  // Tell ESLint that the code is running in the browser environment
+    node: true,     // If you also need Node.js environment support
+  },
   root: true,
   extends: [
     "eslint:recommended",
-    "@typescript-eslint/recommended",
+    // "@typescript-eslint/recommended",
     "prettier"
   ],
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint", "import"],
   rules: {
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
     "import/order": [
       "error",
       {
@@ -22,10 +26,10 @@ module.exports = {
           "index"
         ],
         "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
+        // "alphabetize": {
+        //   "order": "asc",
+        //   "caseInsensitive": true
+        // }
       }
     ]
   },

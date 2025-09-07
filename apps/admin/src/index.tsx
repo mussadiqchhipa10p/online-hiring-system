@@ -1,14 +1,18 @@
-import React from 'react';
+// React and React Admin imports
+import { Admin, Resource } from 'react-admin';
 import ReactDOM from 'react-dom/client';
-import { Admin, Resource, List, Edit, Create, Show } from 'react-admin';
-import { dataProvider } from './services/dataProvider';
+
+// Local imports
 import { authProvider } from './services/authProvider';
+import { dataProvider } from './services/dataProvider';
 import { theme } from './theme';
+// Page components
 import { Dashboard } from './pages/Dashboard';
-import { UserList, UserEdit, UserCreate, UserShow } from './pages/Users';
 import { JobList, JobEdit, JobCreate, JobShow } from './pages/Jobs';
+import { UserList, UserEdit, UserCreate, UserShow } from './pages/Users';
 import { ApplicationList, ApplicationEdit, ApplicationShow } from './pages/Applications';
 import { Analytics } from './pages/Analytics';
+
 
 const App = () => (
   <Admin

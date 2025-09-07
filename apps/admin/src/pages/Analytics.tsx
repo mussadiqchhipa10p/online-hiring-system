@@ -1,17 +1,16 @@
-import React from 'react';
 import { List, Card, CardContent, Typography, Grid, Box } from '@mui/material';
 import { useGetList } from 'react-admin';
 
 export const Analytics = () => {
-  const { data: users, total: usersTotal } = useGetList('users', {
+  const { total: usersTotal } = useGetList('users', {
     pagination: { page: 1, perPage: 1 },
   });
   
-  const { data: jobs, total: jobsTotal } = useGetList('jobs', {
+  const { total: jobsTotal } = useGetList('jobs', {
     pagination: { page: 1, perPage: 1 },
   });
   
-  const { data: applications, total: applicationsTotal } = useGetList('applications', {
+  const { total: applicationsTotal } = useGetList('applications', {
     pagination: { page: 1, perPage: 1 },
   });
 
