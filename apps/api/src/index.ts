@@ -15,6 +15,7 @@ import ratingsRoutes from './routes/ratings';
 import analyticsRoutes from './routes/analytics';
 import passport from './config/passport';
 import { redisService } from './services/redisService';
+import { specs, swaggerUi } from './swagger';
 
 // Load environment variables
 dotenv.config();
@@ -33,6 +34,9 @@ const io = new Server(server, {
 const socketService = new SocketService(io);
 
 const PORT = process.env.PORT || 3001;
+
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Middleware
 app.use(helmet());
