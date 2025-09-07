@@ -235,6 +235,8 @@ export class JobsService {
       throw new Error('Job not found or access denied');
     }
 
+    const oldStatus = existingJob.status;
+
     const job = await prisma.job.update({
       where: { id },
       data: { status },
@@ -260,7 +262,8 @@ export class JobsService {
       },
     });
 
-    return job;
+    // Return both updated job and old status for Socket.IO events
+    return { job, oldStatus };
   }
 
   async getEmployerJobs(employerId: string, filters: Partial<Omit<JobFilters, 'employerId'>> = {}) {

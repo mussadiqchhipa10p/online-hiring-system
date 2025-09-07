@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
+import { SocketService } from './services/socketService';
 import authRoutes from './routes/auth';
 import oauthRoutes from './routes/oauth';
 import jobsRoutes from './routes/jobs';
@@ -21,9 +22,13 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'],
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
+
+// Initialize Socket.IO service
+const socketService = new SocketService(io);
 
 const PORT = process.env.PORT || 3001;
 
@@ -64,14 +69,7 @@ app.use('/api/analytics', (req, res) => {
   res.json({ message: 'Analytics routes - Coming soon' });
 });
 
-// Socket.IO connection handling
-io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
-});
+// Socket.IO connection handling is now managed by SocketService
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -89,4 +87,4 @@ server.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
 });
 
-export { io };
+export { io, socketService };

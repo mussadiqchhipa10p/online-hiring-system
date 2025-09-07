@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { applicationsService } from '../services/applicationsService';
 import { createApplicationSchema, updateApplicationSchema, applicationFilterSchema } from '../utils/validation';
 import { AppStatus } from '@prisma/client';
+import { socketService } from '../index';
 
 export class ApplicationsController {
   async createApplication(req: Request, res: Response) {
@@ -17,6 +18,9 @@ export class ApplicationsController {
       }
 
       const application = await applicationsService.createApplication(validatedData, candidateId);
+
+      // Emit Socket.IO event for new application
+      socketService.emitApplicationCreated(application);
 
       res.status(201).json({
         success: true,
@@ -86,11 +90,14 @@ export class ApplicationsController {
         });
       }
 
-      const application = await applicationsService.updateApplicationStatus(id, status, employerId);
+      const result = await applicationsService.updateApplicationStatus(id, status, employerId);
+
+      // Emit Socket.IO event for status change
+      socketService.emitApplicationStatusChanged(result.application, result.oldStatus);
 
       res.json({
         success: true,
-        data: application,
+        data: result.application,
         message: 'Application status updated successfully',
       });
     } catch (error: any) {

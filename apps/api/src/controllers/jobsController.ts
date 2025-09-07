@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { jobsService } from '../services/jobsService';
 import { createJobSchema, updateJobSchema, jobFiltersSchema } from '../utils/validation';
 import { JobStatus } from '@prisma/client';
+import { socketService } from '../index';
 
 export class JobsController {
   async createJob(req: Request, res: Response) {
@@ -140,11 +141,14 @@ export class JobsController {
         });
       }
 
-      const job = await jobsService.updateJobStatus(id, status, employerId);
+      const result = await jobsService.updateJobStatus(id, status, employerId);
+
+      // Emit Socket.IO event for job status change
+      socketService.emitJobStatusChanged(result.job, result.oldStatus);
 
       res.json({
         success: true,
-        data: job,
+        data: result.job,
         message: 'Job status updated successfully',
       });
     } catch (error: any) {

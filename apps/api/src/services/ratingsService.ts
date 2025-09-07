@@ -79,6 +79,9 @@ export class RatingsService {
       },
     });
 
+    // Emit Socket.IO event for new rating
+    // Note: Socket events will be emitted from controllers to avoid circular imports
+
     return rating;
   }
 
@@ -136,6 +139,9 @@ export class RatingsService {
         },
       },
     });
+
+    // Emit Socket.IO event for rating update
+    // Note: Socket events will be emitted from controllers to avoid circular imports
 
     return rating;
   }

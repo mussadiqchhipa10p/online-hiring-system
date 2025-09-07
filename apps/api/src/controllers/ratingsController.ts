@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ratingsService } from '../services/ratingsService';
 import { createRatingSchema, updateRatingSchema } from '../utils/validation';
+import { socketService } from '../index';
 
 export class RatingsController {
   async createRating(req: Request, res: Response) {
@@ -16,6 +17,9 @@ export class RatingsController {
       }
 
       const rating = await ratingsService.createRating(validatedData, employerId);
+
+      // Emit Socket.IO event for new rating
+      socketService.emitRatingCreated(rating);
 
       res.status(201).json({
         success: true,
@@ -44,6 +48,9 @@ export class RatingsController {
       }
 
       const rating = await ratingsService.updateRating(id, validatedData, employerId);
+
+      // Emit Socket.IO event for rating update
+      socketService.emitRatingUpdated(rating);
 
       res.json({
         success: true,

@@ -66,6 +66,9 @@ export class ApplicationsService {
       },
     });
 
+    // Emit Socket.IO event for new application
+    // Note: Socket events will be emitted from controllers to avoid circular imports
+
     return application;
   }
 
@@ -214,6 +217,8 @@ export class ApplicationsService {
       throw new Error('Application not found or access denied');
     }
 
+    const oldStatus = application.status;
+
     // Update application status
     const updatedApplication = await prisma.application.update({
       where: { id },
@@ -249,7 +254,8 @@ export class ApplicationsService {
       },
     });
 
-    return updatedApplication;
+    // Return both updated application and old status for Socket.IO events
+    return { application: updatedApplication, oldStatus };
   }
 
   async updateApplication(id: string, data: UpdateApplicationInput, candidateId: string) {
